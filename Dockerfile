@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1.4
 # Stage 1: Build
 FROM node:20-alpine AS builder
 
@@ -7,17 +8,20 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci
+# Install dependencies with cache mount for faster builds
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --prefer-offline --no-audit
 
 # Copy source code
 COPY . .
 
-# Build the application
-RUN npm run build
+# Build the application with cache mount for vite
+RUN --mount=type=cache,target=/app/.svelte-kit \
+    npm run build
 
 # Remove dev dependencies
-RUN npm prune --production
+RUN --mount=type=cache,target=/root/.npm \
+    npm prune --production --prefer-offline
 
 # Stage 2: Production
 FROM node:20-alpine AS production
