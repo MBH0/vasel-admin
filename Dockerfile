@@ -44,9 +44,9 @@ ENV PORT=4321
 # Expose port
 EXPOSE 4321
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:4321', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
+# Health check using curl (more reliable than node for healthchecks)
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+  CMD curl -f http://localhost:4321 || exit 1
 
 # Start the application
 CMD ["node", "build/index.js"]
