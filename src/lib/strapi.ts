@@ -1,7 +1,52 @@
 import { env } from '$env/dynamic/private';
+import { Agent } from 'http';
 
 const STRAPI_URL = env.STRAPI_URL || '';
 const STRAPI_FULL_TOKEN = env.STRAPI_FULL_TOKEN || '';
+
+// Configure HTTP agent to use IPv4 only (fixes Docker DNS issues)
+const httpAgent = new Agent({
+	family: 4, // Force IPv4
+	keepAlive: true
+});
+
+// Retry helper function for handling temporary DNS/network errors
+async function fetchWithRetry(
+	url: string,
+	options: RequestInit,
+	maxRetries: number = 3,
+	delayMs: number = 1000
+): Promise<Response> {
+	let lastError: Error | null = null;
+
+	for (let attempt = 0; attempt <= maxRetries; attempt++) {
+		try {
+			return await fetch(url, options);
+		} catch (error: any) {
+			lastError = error;
+
+			// Retry on DNS errors (EAI_AGAIN, ENOTFOUND) and network errors (ECONNREFUSED, ETIMEDOUT)
+			const shouldRetry =
+				error?.cause?.code === 'EAI_AGAIN' ||
+				error?.cause?.code === 'ENOTFOUND' ||
+				error?.cause?.code === 'ECONNREFUSED' ||
+				error?.cause?.code === 'ETIMEDOUT';
+
+			if (!shouldRetry || attempt === maxRetries) {
+				throw error;
+			}
+
+			// Exponential backoff
+			const delay = delayMs * Math.pow(2, attempt);
+			console.log(
+				`Strapi connection attempt ${attempt + 1} failed (${error?.cause?.code}), retrying in ${delay}ms...`
+			);
+			await new Promise((resolve) => setTimeout(resolve, delay));
+		}
+	}
+
+	throw lastError;
+}
 
 interface StrapiResponse<T> {
 	data: T;
@@ -36,14 +81,16 @@ class StrapiClient {
 			headers: {
 				'Authorization': `Bearer ${this.token}`,
 				'Content-Type': 'application/json'
-			}
+			},
+			// @ts-ignore - Node.js specific agent option
+			agent: this.baseUrl.startsWith('http://') ? httpAgent : undefined
 		};
 
 		if (data && (method === 'POST' || method === 'PUT')) {
 			options.body = JSON.stringify({ data });
 		}
 
-		const response = await fetch(url, options);
+		const response = await fetchWithRetry(url, options);
 
 		if (!response.ok) {
 			const error = await response.text();
