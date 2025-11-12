@@ -26,6 +26,9 @@ RUN --mount=type=cache,target=/root/.npm \
 # Stage 2: Production
 FROM node:20-alpine AS production
 
+# Install curl for healthchecks
+RUN apk add --no-cache curl
+
 # Set working directory
 WORKDIR /app
 
