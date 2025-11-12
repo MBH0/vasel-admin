@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { generateServiceContent } from '$lib/ai';
-import { consumeCSRFToken, generateCSRFToken } from '$lib/auth';
+import { consumeCSRFToken, generateCSRFToken, verifySession } from '$lib/auth';
 import { checkRateLimit, getClientIdentifier, RateLimitPresets } from '$lib/rateLimiter';
 import { validateServiceInput, ValidationError } from '$lib/validation';
 import { dev } from '$app/environment';
@@ -22,6 +22,20 @@ async function regenerateCSRFToken(cookies: Cookies): Promise<string> {
 
 export const POST: RequestHandler = async ({ request, cookies }) => {
 	try {
+		// Session verification
+		const session = cookies.get('session');
+		if (!verifySession(session || null)) {
+			return json(
+				{ error: 'Session expired. Please log in again.' },
+				{
+					status: 401,
+					headers: {
+						'X-Session-Expired': 'true'
+					}
+				}
+			);
+		}
+
 		// CSRF Protection - consume and regenerate token
 		const csrfToken = request.headers.get('x-csrf-token') || cookies.get('csrf_token');
 		const csrfValid = await consumeCSRFToken(csrfToken || '');

@@ -139,14 +139,36 @@ class StrapiClient {
 	}
 
 	async createServiceLocalization(documentId: string, serviceData: any, locale: string) {
-		// In Strapi v4+, create localization by creating a new entry with locale and linking it
-		return this.request('/services', 'POST', {
-			...serviceData,
-			locale,
-			publishedAt: new Date().toISOString(),
-			// Link to the original service using documentId
-			localizations: [documentId]
-		});
+		// In Strapi v5, use the Document Service API endpoint for localizations
+		const url = `${this.baseUrl}/api/services/${documentId}/localizations`;
+
+		console.log(`[Strapi] Creating localization for service ${documentId} with locale ${locale}`);
+
+		const options: RequestInit = {
+			method: 'POST',
+			headers: {
+				'Authorization': `Bearer ${this.token}`,
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				locale,
+				data: {
+					...serviceData,
+					publishedAt: new Date().toISOString()
+				}
+			}),
+			// @ts-ignore - Node.js specific agent option
+			agent: this.baseUrl.startsWith('http://') ? httpAgent : undefined
+		};
+
+		const response = await fetchWithRetry(url, options);
+
+		if (!response.ok) {
+			const error = await response.text();
+			throw new Error(`Strapi API error: ${response.status} - ${error}`);
+		}
+
+		return response.json();
 	}
 
 	async getServices(locale?: string) {
@@ -172,14 +194,36 @@ class StrapiClient {
 	}
 
 	async createBlogLocalization(documentId: string, blogData: any, locale: string) {
-		// In Strapi v4+, create localization by creating a new entry with locale and linking it
-		return this.request('/blogs', 'POST', {
-			...blogData,
-			locale,
-			publishedAt: new Date().toISOString(),
-			// Link to the original blog using documentId
-			localizations: [documentId]
-		});
+		// In Strapi v5, use the Document Service API endpoint for localizations
+		const url = `${this.baseUrl}/api/blogs/${documentId}/localizations`;
+
+		console.log(`[Strapi] Creating localization for blog ${documentId} with locale ${locale}`);
+
+		const options: RequestInit = {
+			method: 'POST',
+			headers: {
+				'Authorization': `Bearer ${this.token}`,
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				locale,
+				data: {
+					...blogData,
+					publishedAt: new Date().toISOString()
+				}
+			}),
+			// @ts-ignore - Node.js specific agent option
+			agent: this.baseUrl.startsWith('http://') ? httpAgent : undefined
+		};
+
+		const response = await fetchWithRetry(url, options);
+
+		if (!response.ok) {
+			const error = await response.text();
+			throw new Error(`Strapi API error: ${response.status} - ${error}`);
+		}
+
+		return response.json();
 	}
 
 	async getBlogs(locale?: string) {

@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { strapiClient } from '$lib/strapi';
-import { consumeCSRFToken, generateCSRFToken } from '$lib/auth';
+import { consumeCSRFToken, generateCSRFToken, verifySession } from '$lib/auth';
 import { checkRateLimit, getClientIdentifier, RateLimitPresets } from '$lib/rateLimiter';
 import { dev } from '$app/environment';
 import type { Cookies } from '@sveltejs/kit';
@@ -79,6 +79,20 @@ function normalizeComplexity(data: any): any {
 
 export const POST: RequestHandler = async ({ request, cookies }) => {
 	try {
+		// Session verification
+		const session = cookies.get('session');
+		if (!verifySession(session || null)) {
+			return json(
+				{ error: 'Session expired. Please log in again.' },
+				{
+					status: 401,
+					headers: {
+						'X-Session-Expired': 'true'
+					}
+				}
+			);
+		}
+
 		// CSRF Protection
 		const csrfToken = request.headers.get('x-csrf-token') || cookies.get('csrf_token');
 		const csrfValid = await consumeCSRFToken(csrfToken || '');

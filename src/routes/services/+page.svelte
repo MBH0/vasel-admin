@@ -5,6 +5,7 @@
 	import ServicePreview from '$lib/components/ServicePreview.svelte';
 	import ServiceEditor from '$lib/components/ServiceEditor.svelte';
 	import { headersWithCSRF } from '$lib/csrf';
+	import { handleSessionExpiration, updateCSRFToken } from '$lib/sessionHelper';
 
 	let serviceName = '';
 	let keywords = '';
@@ -47,10 +48,14 @@
 
 			const data = await response.json();
 
-			// Update CSRF token if provided in response
-			if (data.csrfToken) {
-				document.cookie = `csrf_token=${encodeURIComponent(data.csrfToken)}; path=/; max-age=3600; SameSite=Strict`;
+			// Check for session expiration
+			if (response.status === 401 || response.headers.get('X-Session-Expired') === 'true') {
+				await handleSessionExpiration(data.error || 'Your session has expired. Please log in again.');
+				return;
 			}
+
+			// Update CSRF token if provided in response
+			updateCSRFToken(data);
 
 			if (!response.ok) {
 				throw new Error(data.error || 'Failed to generate service');
@@ -80,10 +85,14 @@
 
 			const data = await response.json();
 
-			// Update CSRF token if provided in response
-			if (data.csrfToken) {
-				document.cookie = `csrf_token=${encodeURIComponent(data.csrfToken)}; path=/; max-age=3600; SameSite=Strict`;
+			// Check for session expiration
+			if (response.status === 401 || response.headers.get('X-Session-Expired') === 'true') {
+				await handleSessionExpiration(data.error || 'Your session has expired. Please log in again.');
+				return;
 			}
+
+			// Update CSRF token if provided in response
+			updateCSRFToken(data);
 
 			if (!response.ok) {
 				throw new Error(data.error || 'Failed to publish service');
