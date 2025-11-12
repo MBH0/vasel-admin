@@ -45,12 +45,17 @@
 				})
 			});
 
+			const data = await response.json();
+
+			// Update CSRF token if provided in response
+			if (data.csrfToken) {
+				document.cookie = `csrf_token=${encodeURIComponent(data.csrfToken)}; path=/; max-age=3600; SameSite=Strict`;
+			}
+
 			if (!response.ok) {
-				const data = await response.json();
 				throw new Error(data.error || 'Failed to generate service');
 			}
 
-			const data = await response.json();
 			generatedContent = data;
 			success = 'Service generated successfully! Review and publish below.';
 		} catch (err: any) {
@@ -73,8 +78,14 @@
 				body: JSON.stringify(generatedContent)
 			});
 
+			const data = await response.json();
+
+			// Update CSRF token if provided in response
+			if (data.csrfToken) {
+				document.cookie = `csrf_token=${encodeURIComponent(data.csrfToken)}; path=/; max-age=3600; SameSite=Strict`;
+			}
+
 			if (!response.ok) {
-				const data = await response.json();
 				throw new Error(data.error || 'Failed to publish service');
 			}
 
