@@ -14,7 +14,7 @@ services:
       - PORT=4321
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
       - JWT_SECRET=${JWT_SECRET}
-      - STRAPI_URL=${STRAPI_URL:-http://strapi:1337}
+      - STRAPI_URL=${STRAPI_URL:-http://strapi-vasel:1337}
       - STRAPI_FULL_TOKEN=${STRAPI_FULL_TOKEN}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
     depends_on:
@@ -28,55 +28,6 @@ services:
       timeout: 3s
       retries: 3
       start_period: 10s
-
-  strapi:
-    image: strapi/strapi:latest
-    container_name: vasel-strapi
-    ports:
-      - "1337:1337"
-    environment:
-      - NODE_ENV=production
-      - DATABASE_CLIENT=postgres
-      - DATABASE_HOST=postgres
-      - DATABASE_PORT=5432
-      - DATABASE_NAME=${DATABASE_NAME:-strapi}
-      - DATABASE_USERNAME=${DATABASE_USERNAME:-strapi}
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
-      - JWT_SECRET=${STRAPI_JWT_SECRET}
-      - ADMIN_JWT_SECRET=${STRAPI_ADMIN_JWT_SECRET}
-      - APP_KEYS=${STRAPI_APP_KEYS}
-      - API_TOKEN_SALT=${STRAPI_API_TOKEN_SALT}
-    volumes:
-      - strapi-data:/srv/app
-    depends_on:
-      - postgres
-    restart: unless-stopped
-    networks:
-      - vasel-database
-
-  postgres:
-    image: postgres:15-alpine
-    container_name: vasel-postgres
-    environment:
-      - POSTGRES_DB=${DATABASE_NAME:-strapi}
-      - POSTGRES_USER=${DATABASE_USERNAME:-strapi}
-      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    restart: unless-stopped
-    networks:
-      - vasel-database
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME:-strapi}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-volumes:
-  strapi-data:
-    driver: local
-  postgres-data:
-    driver: local
 
 networks:
   vasel-database:
