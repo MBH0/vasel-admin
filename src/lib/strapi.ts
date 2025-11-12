@@ -139,36 +139,50 @@ class StrapiClient {
 	}
 
 	async createServiceLocalization(documentId: string, serviceData: any, locale: string) {
-		// In Strapi v5, use the Document Service API endpoint for localizations
-		const url = `${this.baseUrl}/api/services/${documentId}/localizations`;
+		// In Strapi v5, we need to create the localization entry and manually link it
+		// First create the entry in the new locale
+		console.log(`[Strapi] Creating service in locale ${locale}`);
 
-		console.log(`[Strapi] Creating localization for service ${documentId} with locale ${locale}`);
+		const createResult = await this.request(`/services?locale=${locale}`, 'POST', {
+			...serviceData,
+			publishedAt: new Date().toISOString()
+		});
 
-		const options: RequestInit = {
-			method: 'POST',
-			headers: {
-				'Authorization': `Bearer ${this.token}`,
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				locale,
-				data: {
-					...serviceData,
-					publishedAt: new Date().toISOString()
-				}
-			}),
-			// @ts-ignore - Node.js specific agent option
-			agent: this.baseUrl.startsWith('http://') ? httpAgent : undefined
-		};
-
-		const response = await fetchWithRetry(url, options);
-
-		if (!response.ok) {
-			const error = await response.text();
-			throw new Error(`Strapi API error: ${response.status} - ${error}`);
+		// Then update it to link with the original document using PUT
+		const newDocumentId = createResult.data?.documentId;
+		if (!newDocumentId) {
+			console.warn('Could not get documentId from created localization');
+			return createResult;
 		}
 
-		return response.json();
+		console.log(`[Strapi] Linking ${newDocumentId} to original ${documentId}`);
+
+		// Update the created entry to link it with the original
+		try {
+			const url = `${this.baseUrl}/api/services/${newDocumentId}`;
+			const options: RequestInit = {
+				method: 'PUT',
+				headers: {
+					'Authorization': `Bearer ${this.token}`,
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					data: {
+						localizations: {
+							connect: [{ documentId }]
+						}
+					}
+				}),
+				// @ts-ignore - Node.js specific agent option
+				agent: this.baseUrl.startsWith('http://') ? httpAgent : undefined
+			};
+
+			await fetchWithRetry(url, options);
+		} catch (error) {
+			console.warn('Could not link localizations:', error);
+		}
+
+		return createResult;
 	}
 
 	async getServices(locale?: string) {
@@ -194,36 +208,50 @@ class StrapiClient {
 	}
 
 	async createBlogLocalization(documentId: string, blogData: any, locale: string) {
-		// In Strapi v5, use the Document Service API endpoint for localizations
-		const url = `${this.baseUrl}/api/blogs/${documentId}/localizations`;
+		// In Strapi v5, we need to create the localization entry and manually link it
+		// First create the entry in the new locale
+		console.log(`[Strapi] Creating blog in locale ${locale}`);
 
-		console.log(`[Strapi] Creating localization for blog ${documentId} with locale ${locale}`);
+		const createResult = await this.request(`/blogs?locale=${locale}`, 'POST', {
+			...blogData,
+			publishedAt: new Date().toISOString()
+		});
 
-		const options: RequestInit = {
-			method: 'POST',
-			headers: {
-				'Authorization': `Bearer ${this.token}`,
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				locale,
-				data: {
-					...blogData,
-					publishedAt: new Date().toISOString()
-				}
-			}),
-			// @ts-ignore - Node.js specific agent option
-			agent: this.baseUrl.startsWith('http://') ? httpAgent : undefined
-		};
-
-		const response = await fetchWithRetry(url, options);
-
-		if (!response.ok) {
-			const error = await response.text();
-			throw new Error(`Strapi API error: ${response.status} - ${error}`);
+		// Then update it to link with the original document using PUT
+		const newDocumentId = createResult.data?.documentId;
+		if (!newDocumentId) {
+			console.warn('Could not get documentId from created localization');
+			return createResult;
 		}
 
-		return response.json();
+		console.log(`[Strapi] Linking ${newDocumentId} to original ${documentId}`);
+
+		// Update the created entry to link it with the original
+		try {
+			const url = `${this.baseUrl}/api/blogs/${newDocumentId}`;
+			const options: RequestInit = {
+				method: 'PUT',
+				headers: {
+					'Authorization': `Bearer ${this.token}`,
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					data: {
+						localizations: {
+							connect: [{ documentId }]
+						}
+					}
+				}),
+				// @ts-ignore - Node.js specific agent option
+				agent: this.baseUrl.startsWith('http://') ? httpAgent : undefined
+			};
+
+			await fetchWithRetry(url, options);
+		} catch (error) {
+			console.warn('Could not link localizations:', error);
+		}
+
+		return createResult;
 	}
 
 	async getBlogs(locale?: string) {
