@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  vasel-admin:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: vasel-admin
+    ports:
+      - "4321:4321"
+    environment:
+      - NODE_ENV=production
+      - PORT=4321
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      - STRAPI_URL=${STRAPI_URL}
+      - STRAPI_FULL_TOKEN=${STRAPI_FULL_TOKEN}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4321"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s

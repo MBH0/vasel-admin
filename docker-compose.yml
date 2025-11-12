@@ -5,11 +5,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      target: production
     container_name: vasel-admin
     ports:
-      - "3000:3000"
+      - "4321:4321"
     environment:
       - NODE_ENV=production
+      - PORT=4321
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
       - JWT_SECRET=${JWT_SECRET}
       - STRAPI_URL=${STRAPI_URL:-http://strapi:1337}
@@ -19,13 +21,13 @@ services:
       - strapi
     restart: unless-stopped
     networks:
-      - vasel-network
+      - vasel-database
     healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      test: ["CMD", "curl", "-f", "http://localhost:4321"]
       interval: 30s
       timeout: 3s
       retries: 3
-      start_period: 40s
+      start_period: 10s
 
   strapi:
     image: strapi/strapi:latest
@@ -50,7 +52,7 @@ services:
       - postgres
     restart: unless-stopped
     networks:
-      - vasel-network
+      - vasel-database
 
   postgres:
     image: postgres:15-alpine
@@ -63,7 +65,7 @@ services:
       - postgres-data:/var/lib/postgresql/data
     restart: unless-stopped
     networks:
-      - vasel-network
+      - vasel-database
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME:-strapi}"]
       interval: 10s
@@ -77,5 +79,5 @@ volumes:
     driver: local
 
 networks:
-  vasel-network:
-    driver: bridge
+  vasel-database:
+    external: true
