@@ -1,6 +1,7 @@
 import { redirect, type Handle } from '@sveltejs/kit';
 import { verifySession } from '$lib/auth';
 import { dev } from '$app/environment';
+import { env } from '$env/dynamic/private';
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const session = event.cookies.get('session');
@@ -29,16 +30,19 @@ export const handle: Handle = async ({ event, resolve }) => {
 	// Resolve the request with security headers
 	const response = await resolve(event);
 
+	// Get STRAPI_URL from environment
+	const strapiUrl = env.STRAPI_URL || 'http://localhost:1337';
+
 	// Add security headers
 	const headers = {
 		// Content Security Policy - prevents XSS attacks
 		'Content-Security-Policy': [
 			"default-src 'self'",
-			"script-src 'self' 'unsafe-inline'", // unsafe-inline needed for Svelte
+			"script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com", // unsafe-inline needed for Svelte, cloudflare for analytics
 			"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
 			"img-src 'self' data: https:",
 			"font-src 'self' data: https://fonts.gstatic.com",
-			"connect-src 'self' http://localhost:1337 https://api.openai.com",
+			`connect-src 'self' ${strapiUrl} https://api.openai.com https://cloudflareinsights.com`,
 			"frame-ancestors 'none'",
 			"base-uri 'self'",
 			"form-action 'self'"
