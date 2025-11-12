@@ -138,11 +138,14 @@ class StrapiClient {
 		});
 	}
 
-	async createServiceLocalization(id: number, serviceData: any, locale: string) {
-		return this.request(`/services/${id}/localizations`, 'POST', {
+	async createServiceLocalization(documentId: string, serviceData: any, locale: string) {
+		// In Strapi v4+, create localization by creating a new entry with locale and linking it
+		return this.request('/services', 'POST', {
 			...serviceData,
 			locale,
-			publishedAt: new Date().toISOString()
+			publishedAt: new Date().toISOString(),
+			// Link to the original service using documentId
+			localizations: [documentId]
 		});
 	}
 
@@ -168,11 +171,14 @@ class StrapiClient {
 		});
 	}
 
-	async createBlogLocalization(id: number, blogData: any, locale: string) {
-		return this.request(`/blogs/${id}/localizations`, 'POST', {
+	async createBlogLocalization(documentId: string, blogData: any, locale: string) {
+		// In Strapi v4+, create localization by creating a new entry with locale and linking it
+		return this.request('/blogs', 'POST', {
 			...blogData,
 			locale,
-			publishedAt: new Date().toISOString()
+			publishedAt: new Date().toISOString(),
+			// Link to the original blog using documentId
+			localizations: [documentId]
 		});
 	}
 

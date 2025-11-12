@@ -83,19 +83,19 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 		const esResult = await strapiClient.createBlog(es, 'es');
 		console.log('Spanish blog created:', esResult);
 
-		// Extract the ID from the created entry
-		const blogId = esResult.data?.id || esResult.data?.documentId;
+		// Extract the documentId from the created entry (required for localization in Strapi v4+)
+		const documentId = esResult.data?.documentId;
 
-		if (!blogId) {
-			throw new Error('Could not get blog ID from Strapi response');
+		if (!documentId) {
+			throw new Error('Could not get documentId from Strapi response');
 		}
 
 		// Wait a bit to avoid rate limiting
 		await new Promise(resolve => setTimeout(resolve, 500));
 
 		// Create English localization linked to Spanish entry
-		console.log(`Creating English localization for blog ${blogId}...`);
-		const enResult = await strapiClient.createBlogLocalization(blogId, en, 'en');
+		console.log(`Creating English localization for blog ${documentId}...`);
+		const enResult = await strapiClient.createBlogLocalization(documentId, en, 'en');
 		console.log('English localization created:', enResult);
 
 		return json({
