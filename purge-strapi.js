@@ -1,6 +1,6 @@
 import 'dotenv/config';
 
-const STRAPI_URL = process.env.STRAPI_URL || 'http://localhost:1337';
+const STRAPI_URL = process.env.STRAPI_URL || 'https://strapivasel.diegosalazarvl.com';
 const STRAPI_TOKEN = process.env.STRAPI_FULL_TOKEN;
 
 if (!STRAPI_TOKEN) {
@@ -26,7 +26,18 @@ async function fetchStrapi(endpoint, options = {}) {
 		throw new Error(`Strapi API error: ${response.status} - ${error}`);
 	}
 
-	return response.json();
+	// Handle empty responses (like 204 No Content for DELETE)
+	const contentType = response.headers.get('content-type');
+	if (!contentType || !contentType.includes('application/json')) {
+		return { data: null };
+	}
+
+	const text = await response.text();
+	if (!text) {
+		return { data: null };
+	}
+
+	return JSON.parse(text);
 }
 
 async function getAllServices() {
