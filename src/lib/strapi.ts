@@ -1,4 +1,7 @@
-import { STRAPI_URL, STRAPI_FULL_TOKEN } from '$env/static/private';
+import { env } from '$env/dynamic/private';
+
+const STRAPI_URL = env.STRAPI_URL || '';
+const STRAPI_FULL_TOKEN = env.STRAPI_FULL_TOKEN || '';
 
 interface StrapiResponse<T> {
 	data: T;

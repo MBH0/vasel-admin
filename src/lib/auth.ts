@@ -1,7 +1,11 @@
-import { ADMIN_PASSWORD, JWT_SECRET } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 import { dev } from '$app/environment';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+
+// Get environment variables at runtime
+const ADMIN_PASSWORD = env.ADMIN_PASSWORD || '';
+const JWT_SECRET = env.JWT_SECRET || '';
 
 // Password hashing
 const SALT_ROUNDS = 12;
@@ -9,7 +13,7 @@ let hashedPassword: string | null = null;
 
 // Initialize hashed password on module load
 async function initPasswordHash() {
-	if (!hashedPassword) {
+	if (!hashedPassword && ADMIN_PASSWORD) {
 		hashedPassword = await bcrypt.hash(ADMIN_PASSWORD, SALT_ROUNDS);
 	}
 }
