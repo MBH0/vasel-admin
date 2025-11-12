@@ -43,8 +43,8 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 		// Create JWT session
 		const sessionToken = createSession();
 
-		// Generate CSRF token
-		const csrfToken = generateCSRFToken();
+		// Generate CSRF token (async with Redis)
+		const csrfToken = await generateCSRFToken();
 
 		// Set secure session cookie
 		cookies.set('session', sessionToken, {
