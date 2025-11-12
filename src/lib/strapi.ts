@@ -1,21 +1,41 @@
 import { env } from '$env/dynamic/private';
 import { Agent } from 'http';
+import { lookup } from 'dns';
+import { promisify } from 'util';
 
 const STRAPI_URL = env.STRAPI_URL || '';
 const STRAPI_FULL_TOKEN = env.STRAPI_FULL_TOKEN || '';
 
+const dnsLookup = promisify(lookup);
+
+// Custom lookup function with better error handling
+async function customLookup(hostname: string): Promise<string> {
+	try {
+		const result = await dnsLookup(hostname, { family: 4, all: false });
+		return typeof result === 'object' && 'address' in result ? result.address : result as string;
+	} catch (error: any) {
+		console.error(`DNS lookup failed for ${hostname}:`, error?.code);
+		throw error;
+	}
+}
+
 // Configure HTTP agent to use IPv4 only (fixes Docker DNS issues)
 const httpAgent = new Agent({
 	family: 4, // Force IPv4
-	keepAlive: true
+	keepAlive: true,
+	lookup: (hostname, options, callback) => {
+		customLookup(hostname)
+			.then((address) => callback(null, address, 4))
+			.catch((error) => callback(error, '', 4));
+	}
 });
 
 // Retry helper function for handling temporary DNS/network errors
 async function fetchWithRetry(
 	url: string,
 	options: RequestInit,
-	maxRetries: number = 3,
-	delayMs: number = 1000
+	maxRetries: number = 10,
+	delayMs: number = 500
 ): Promise<Response> {
 	let lastError: Error | null = null;
 
@@ -36,10 +56,13 @@ async function fetchWithRetry(
 				throw error;
 			}
 
-			// Exponential backoff
-			const delay = delayMs * Math.pow(2, attempt);
-			console.log(
-				`Strapi connection attempt ${attempt + 1} failed (${error?.cause?.code}), retrying in ${delay}ms...`
+			// Exponential backoff with jitter to avoid thundering herd
+			const delay = delayMs * Math.pow(1.5, attempt) + Math.random() * 500;
+			console.error(
+				`[Strapi] Connection attempt ${attempt + 1}/${maxRetries + 1} failed`,
+				`Error: ${error?.cause?.code || error?.code}`,
+				`Message: ${error?.message}`,
+				`Retrying in ${Math.round(delay)}ms...`
 			);
 			await new Promise((resolve) => setTimeout(resolve, delay));
 		}
@@ -75,6 +98,12 @@ class StrapiClient {
 		data?: any
 	): Promise<StrapiResponse<T>> {
 		const url = `${this.baseUrl}/api${endpoint}`;
+
+		// Log connection details for debugging
+		console.log(`[Strapi] Attempting ${method} request to: ${url}`);
+		if (!this.baseUrl) {
+			throw new Error('STRAPI_URL environment variable is not configured');
+		}
 
 		const options: RequestInit = {
 			method,
