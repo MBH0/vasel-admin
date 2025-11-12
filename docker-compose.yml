@@ -17,8 +17,6 @@ services:
       - STRAPI_URL=${STRAPI_URL:-http://strapi-vasel:1337}
       - STRAPI_FULL_TOKEN=${STRAPI_FULL_TOKEN}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
-    depends_on:
-      - strapi
     restart: unless-stopped
     networks:
       - vasel-database
