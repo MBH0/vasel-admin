@@ -1,8 +1,23 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { strapiClient } from '$lib/strapi';
-import { consumeCSRFToken } from '$lib/auth';
+import { consumeCSRFToken, generateCSRFToken } from '$lib/auth';
 import { checkRateLimit, getClientIdentifier, RateLimitPresets } from '$lib/rateLimiter';
+import { dev } from '$app/environment';
+import type { Cookies } from '@sveltejs/kit';
+
+// Helper function to regenerate CSRF token after each request
+async function regenerateCSRFToken(cookies: Cookies): Promise<string> {
+	const newToken = await generateCSRFToken();
+	cookies.set('csrf_token', newToken, {
+		path: '/',
+		httpOnly: false,
+		sameSite: 'strict',
+		secure: !dev,
+		maxAge: 60 * 60 // 1 hour
+	});
+	return newToken;
+}
 
 // Helper function to validate and fix SEO fields
 function sanitizeSEO(data: any): any {
@@ -40,8 +55,13 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 	try {
 		// CSRF Protection
 		const csrfToken = request.headers.get('x-csrf-token') || cookies.get('csrf_token');
-		if (!consumeCSRFToken(csrfToken || '')) {
-			return json({ error: 'Invalid or expired CSRF token' }, { status: 403 });
+		const csrfValid = await consumeCSRFToken(csrfToken || '');
+
+		// Generate new CSRF token for next request
+		const newCSRFToken = await regenerateCSRFToken(cookies);
+
+		if (!csrfValid) {
+			return json({ error: 'Invalid or expired CSRF token', csrfToken: newCSRFToken }, { status: 403 });
 		}
 
 		// Rate limiting
@@ -101,7 +121,8 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 		return json({
 			success: true,
 			spanish: esResult,
-			english: enResult
+			english: enResult,
+			csrfToken: newCSRFToken
 		}, {
 			headers: {
 				'X-RateLimit-Limit': String(rateLimit.limit),
@@ -126,8 +147,11 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 			}
 		}
 
+		// Generate new CSRF token for retry
+		const retryCSRFToken = await regenerateCSRFToken(cookies);
+
 		return json(
-			{ error: errorMessage },
+			{ error: errorMessage, csrfToken: retryCSRFToken },
 			{ status: error.message?.includes('unique') ? 409 : 500 }
 		);
 	}

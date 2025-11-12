@@ -2,6 +2,7 @@ import { env } from '$env/dynamic/private';
 import { dev } from '$app/environment';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { storeCSRFToken, verifyCSRFTokenInRedis, deleteCSRFToken } from './redis';
 
 // Get environment variables at runtime
 const ADMIN_PASSWORD = env.ADMIN_PASSWORD || '';
@@ -65,59 +66,45 @@ export function verifySession(token: string | null): boolean {
 	}
 }
 
-// CSRF Token Management
-const csrfTokens = new Map<string, number>();
-const CSRF_TOKEN_LIFETIME = 1000 * 60 * 60; // 1 hour
-
-export function generateCSRFToken(): string {
+// CSRF Token Management with Redis
+export async function generateCSRFToken(): Promise<string> {
 	const token = jwt.sign(
 		{ type: 'csrf', random: Math.random().toString(36) },
 		JWT_SECRET,
 		{ expiresIn: '1h' }
 	);
 
-	csrfTokens.set(token, Date.now());
-	cleanExpiredCSRFTokens();
+	// Store token in Redis with automatic expiration
+	await storeCSRFToken(token);
 
 	return token;
 }
 
-export function verifyCSRFToken(token: string | null): boolean {
+export async function verifyCSRFToken(token: string | null): Promise<boolean> {
 	if (!token) return false;
 
 	try {
+		// Verify JWT signature and expiration
 		const decoded = jwt.verify(token, JWT_SECRET) as any;
 
 		if (decoded.type !== 'csrf') return false;
 
-		const timestamp = csrfTokens.get(token);
-		if (!timestamp) return false;
-
-		// Check if token is expired
-		if (Date.now() - timestamp > CSRF_TOKEN_LIFETIME) {
-			csrfTokens.delete(token);
-			return false;
-		}
-
-		return true;
+		// Check if token exists in Redis
+		return await verifyCSRFTokenInRedis(token);
 	} catch {
 		return false;
 	}
 }
 
-export function consumeCSRFToken(token: string): boolean {
-	if (verifyCSRFToken(token)) {
-		csrfTokens.delete(token);
+export async function consumeCSRFToken(token: string): Promise<boolean> {
+	// Verify token first
+	const isValid = await verifyCSRFToken(token);
+
+	if (isValid) {
+		// Delete token from Redis to consume it
+		await deleteCSRFToken(token);
 		return true;
 	}
-	return false;
-}
 
-function cleanExpiredCSRFTokens() {
-	const now = Date.now();
-	for (const [token, timestamp] of csrfTokens.entries()) {
-		if (now - timestamp > CSRF_TOKEN_LIFETIME) {
-			csrfTokens.delete(token);
-		}
-	}
+	return false;
 }
