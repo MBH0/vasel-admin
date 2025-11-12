@@ -22,8 +22,6 @@ services:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_DB=${REDIS_DB:-3}
       - REDIS_TLS=${REDIS_TLS:-false}
-    depends_on:
-      - redis
     restart: unless-stopped
     networks:
       - vasel-database
@@ -33,27 +31,6 @@ services:
       timeout: 3s
       retries: 3
       start_period: 10s
-
-  redis:
-    image: redis:7-alpine
-    container_name: vasel-redis
-    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis-data:/data
-    restart: unless-stopped
-    networks:
-      - vasel-database
-    healthcheck:
-      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
-
-volumes:
-  redis-data:
-    driver: local
 
 networks:
   vasel-database:
