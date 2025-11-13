@@ -1,0 +1,40 @@
+{
+  "id": 45,
+  "documentId": "ssooqubswt8l91jum0heam8i",
+  "name": "Visa and Stay Authorization for Studies",
+  "slug": "visa-stay-authorization-studies",
+  "description": "We provide comprehensive advisory services for obtaining a visa and stay authorization for studies in Spain. This service is aimed at students wishing to pursue higher education, post-compulsory secondary education, student mobility programs, volunteer work, or training activities at recognized institutions. We assist throughout the process, from document collection to application submission.",
+  "active": true,
+  "tags": [
+    "studies",
+    "education",
+    "visa",
+    "stay",
+    "authorization"
+  ],
+  "required_documents": {
+    "required_documents": [
+      "Valid passport",
+      "Admission letter from the educational institution",
+      "Health insurance",
+      "Proof of financial means",
+      "Criminal record certificate",
+      "Medical certificate (Visa)",
+      "Passport-size photographs",
+      "Completed application form",
+      "Proof of fee payment",
+      "Documentation proving accommodation (Visa)"
+    ]
+  },
+  "createdAt": "2025-11-13T13:47:45.088Z",
+  "updatedAt": "2025-11-13T13:47:45.088Z",
+  "publishedAt": "2025-11-13T13:47:45.109Z",
+  "locale": "en",
+  "price_range": "€400 - €500",
+  "duration": "2-6 months",
+  "complexity": "Básico",
+  "icon_name": "book-open",
+  "benefits": "Personalized advice\nComprehensive process management\nHigh success rate\nUp-to-date knowledge of regulations\nTime and effort saving\nContinuous support during the process",
+  "target_audience": "Foreign students of legal age applying for a residence authorization, or over 17 years old when applying for a student visa.",
+  "success_rate": "95%"
+}

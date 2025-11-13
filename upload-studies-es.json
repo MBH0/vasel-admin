@@ -1,0 +1,95 @@
+{
+  "name": "Visado/Autorización de Estancia por Estudios",
+  "slug": "visado-autorizacion-estancia-estudios",
+  "description": "Brindamos servicios de asesoría integral para la obtención del visado y la autorización de estancia por estudios en España. Este servicio está dirigido a estudiantes que deseen realizar estudios superiores, educación secundaria postobligatoria, programas de movilidad de alumnos, actividades de voluntariado, o actividades de formación en centros reconocidos. Asistimos durante todo el proceso, desde la recopilación de documentos hasta la presentación de la solicitud.",
+  "active": true,
+  "tags": [
+    "estudios",
+    "educación",
+    "visado",
+    "estancia",
+    "autorización"
+  ],
+  "required_documents": {
+    "required_documents": [
+      "Pasaporte válido",
+      "Carta de admisión de la institución educativa",
+      "Seguro médico",
+      "Justificación de medios económicos",
+      "Certificado de antecedentes penales",
+      "Certificado médico (Visado)",
+      "Fotografías tamaño pasaporte",
+      "Formulario de solicitud completado",
+      "Justificante de pago de tasas",
+      "Documentación que acredite el alojamiento (Visado)"
+    ]
+  },
+  "price_range": "€400 - €500",
+  "duration": "2-6 meses",
+  "complexity": "Básico",
+  "icon_name": "book-open",
+  "benefits": "Asesoría personalizada\nGestión integral del proceso\nAlta tasa de éxito\nConocimiento actualizado de la normativa\nAhorro de tiempo y esfuerzo\nApoyo continuo durante el proceso",
+  "target_audience": "Estudiantes extranjeros mayores de edad solicitando autorización de residencia, o mayores de 17 años cuando soliciten visado de estudios.",
+  "success_rate": "95%",
+  "process_steps": [
+    {
+      "step": 1,
+      "title": "Evaluación Inicial",
+      "description": "Revisamos los requisitos y la documentación necesaria para su caso específico.",
+      "estimated_time": "1 semana"
+    },
+    {
+      "step": 2,
+      "title": "Recopilación de Documentos",
+      "description": "Asistimos en la obtención y preparación de toda la documentación requerida.",
+      "estimated_time": "2-4 semanas"
+    },
+    {
+      "step": 3,
+      "title": "Presentación de Solicitud",
+      "description": "Presentamos la solicitud ante las autoridades competentes.",
+      "estimated_time": "1 semana"
+    },
+    {
+      "step": 4,
+      "title": "Seguimiento y Resolución",
+      "description": "Realizamos el seguimiento del expediente hasta obtener la resolución favorable.",
+      "estimated_time": "1-4 meses"
+    }
+  ],
+  "faq": [
+    {
+      "question": "¿Quiénes pueden solicitar este visado/autorización?",
+      "answer": "Estudiantes extranjeros mayores de edad que deseen realizar estudios superiores, educación secundaria postobligatoria, o participar en programas de movilidad, voluntariado o formación en instituciones reconocidas en España."
+    },
+    {
+      "question": "¿Cuánto tiempo tarda el proceso?",
+      "answer": "El proceso completo puede tardar entre 2 y 6 meses, dependiendo de la complejidad del caso y la carga de trabajo de las autoridades."
+    },
+    {
+      "question": "¿Puedo trabajar con este visado/autorización?",
+      "answer": "Sí, se permite trabajar de forma compatible con los estudios, con ciertas limitaciones de horario establecidas en la normativa."
+    },
+    {
+      "question": "¿Qué pasa si mi solicitud es denegada?",
+      "answer": "En caso de denegación, analizamos las razones y valoramos las opciones disponibles, que pueden incluir presentar un recurso o realizar una nueva solicitud subsanando los defectos."
+    },
+    {
+      "question": "¿Se puede renovar la autorización de estudios?",
+      "answer": "Sí, la autorización se puede renovar siempre que se mantengan las condiciones que motivaron su concesión y se cumplan los requisitos establecidos."
+    }
+  ],
+  "SEO": {
+    "metaTitle": "Visado y Autorización de Estancia por Estudios España",
+    "metaDescription": "Asesoría especializada para obtener visado y autorización de estancia por estudios en España. Proceso ágil y eficiente.",
+    "keywords": [
+      "estudios",
+      "visado",
+      "estancia",
+      "educación",
+      "España"
+    ],
+    "canonicalURL": "https://vasel.es/service/visado-autorizacion-estancia-estudios",
+    "metaRobots": "index, follow"
+  }
+}
