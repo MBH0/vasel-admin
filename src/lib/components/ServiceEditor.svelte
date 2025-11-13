@@ -42,7 +42,7 @@
 			editedService.process_steps = [];
 		}
 		editedService.process_steps = [...editedService.process_steps, {
-			step_number: editedService.process_steps.length + 1,
+			step: editedService.process_steps.length + 1,
 			title: '',
 			description: '',
 			estimated_time: ''
@@ -53,7 +53,7 @@
 		editedService.process_steps = editedService.process_steps.filter((_: any, i: number) => i !== index);
 		// Renumber steps
 		editedService.process_steps.forEach((step: any, i: number) => {
-			step.step_number = i + 1;
+			step.step = i + 1;
 		});
 	}
 

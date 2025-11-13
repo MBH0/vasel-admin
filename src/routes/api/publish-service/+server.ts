@@ -77,6 +77,24 @@ function normalizeComplexity(data: any): any {
 	return data;
 }
 
+function normalizeProcessSteps(data: any): any {
+	if (data.process_steps && Array.isArray(data.process_steps)) {
+		data.process_steps = data.process_steps.map((step: any) => {
+			// If step_number exists, rename it to step
+			if ('step_number' in step && !('step' in step)) {
+				return {
+					step: step.step_number,
+					title: step.title,
+					description: step.description,
+					estimated_time: step.estimated_time
+				};
+			}
+			return step;
+		});
+	}
+	return data;
+}
+
 export const POST: RequestHandler = async ({ request, cookies }) => {
 	try {
 		// Session verification
@@ -139,6 +157,8 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 		en = sanitizeSEO(en);
 		es = normalizeComplexity(es);
 		en = normalizeComplexity(en);
+		es = normalizeProcessSteps(es);
+		en = normalizeProcessSteps(en);
 
 		// Create Spanish version (default locale)
 		console.log('Creating Spanish service...');
