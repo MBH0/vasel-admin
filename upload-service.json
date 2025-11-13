@@ -1,0 +1,194 @@
+{
+  "es": {
+    "name": "Autorización de Residencia Temporal y Trabajo por Cuenta Ajena",
+    "slug": "autorizacion-residencia-temporal-trabajo-cuenta-ajena",
+    "description": "La Autorización de Residencia Temporal y Trabajo por Cuenta Ajena permite a ciudadanos no comunitarios mayores de 16 años para residir y trabajar en España bajo un contrato laboral de 40 horas semanales. Este trámite es adecuado para empleadores que desean contratar a trabajadores extranjeros. La duración del proceso es de 4 a 6 meses.",
+    "tags": [
+      "residencia",
+      "trabajo",
+      "reglamento de extranjería",
+      "cuenta ajena"
+    ],
+    "active": true,
+    "price_range": "Desde €600",
+    "duration": "4-6 meses",
+    "complexity": "Intermedio",
+    "icon_name": "briefcase",
+    "target_audience": "Empresas y trabajadores extranjeros que buscan un permiso de residencia y trabajo en España bajo un contrato laboral.",
+    "benefits": "Permite residir legalmente en España.\nFacilita la integración en el mercado laboral español.\nAsegura derechos laborales equivalentes a los de los ciudadanos españoles.\nProporciona acceso a servicios públicos y beneficios sociales.\nPosibilidad de renovación y estabilización del estatus migratorio.\nOportunidad de mejorar el perfil profesional con experiencia internacional.",
+    "process_steps": [
+      {
+        "step": 1,
+        "title": "Evaluación de Elegibilidad",
+        "description": "Determinamos si el candidato y el empleador cumplen con los requisitos establecidos por la ley.",
+        "estimated_time": "1-2 semanas"
+      },
+      {
+        "step": 2,
+        "title": "Recolección de Documentación",
+        "description": "Asistimos en la recopilación de todos los documentos necesarios para la solicitud.",
+        "estimated_time": "2-3 semanas"
+      },
+      {
+        "step": 3,
+        "title": "Presentación de Solicitud",
+        "description": "Presentamos la solicitud de autorización de residencia y trabajo en la oficina de extranjería competente.",
+        "estimated_time": "1 semana"
+      },
+      {
+        "step": 4,
+        "title": "Resolución de la Solicitud",
+        "description": "Recibimos la resolución y notificamos al cliente sobre la decisión final.",
+        "estimated_time": "16-24 semanas"
+      }
+    ],
+    "required_documents": {
+      "required_documents": [
+        "Organización de la documentación del trabajador:",
+        "Pasaporte.",
+        "Acreditación de cualificación profesional u homologación cuando proceda.",
+        "Organización de la documentación del empleador/empresa:",
+        "NIF/NIE o escrituras.",
+        "Acreditación de representación legal.",
+        "Solvencia: IRPF, IVA, Impuesto de Sociedades o VILE.",
+        "Memoria descriptiva del puesto.",
+        "Preparación de documentación para servicio doméstico cuando aplique.",
+        "Copia del contrato de trabajo"
+      ]
+    },
+    "success_rate": "100%",
+    "faq": [
+      {
+        "question": "¿Quién puede solicitar esta autorización?",
+        "answer": "Cualquier ciudadano no comunitario que tenga una oferta de trabajo en España puede solicitar esta autorización, siempre que cumpla con los requisitos legales establecidos."
+      },
+      {
+        "question": "¿Cuánto tiempo tarda el proceso?",
+        "answer": "El proceso completo puede tardar entre 4 y 6 meses, dependiendo de la carga de trabajo de la oficina de extranjería y la complejidad del caso, posteriormente la obtención del visado tarda aproximadamente 1 mes."
+      },
+      {
+        "question": "¿Puede renovarse esta autorización?",
+        "answer": "Sí, la autorización puede renovarse si se mantienen las condiciones del contrato de trabajo y el trabajador sigue cumpliendo con los requisitos."
+      },
+      {
+        "question": "¿Qué sucede si la solicitud es denegada?",
+        "answer": "Si la solicitud es denegada, se puede presentar un recurso de reposición o contencioso-administrativo, dependiendo de las circunstancias específicas del caso."
+      },
+      {
+        "question": "¿El trabajador puede cambiar de empleador?",
+        "answer": "Inicialmente, la autorización está vinculada a un empleador específico. Sin embargo, es posible cambiar de empleador siguiendo el procedimiento establecido por la ley, previa autorización."
+      }
+    ],
+    "SEO": {
+      "metaTitle": "Residencia y Trabajo por Cuenta Ajena en España",
+      "metaDescription": "Obtén la autorización de residencia y trabajo en España con nuestro servicio especializado. Proceso claro y eficiente.",
+      "keywords": [
+        "residencia",
+        "trabajo",
+        "extranjería",
+        "cuenta ajena"
+      ],
+      "canonicalURL": "https://vasel.es/service/autorizacion-residencia-temporal-trabajo-cuenta-ajena",
+      "metaRobots": "index, follow"
+    }
+  },
+  "en": {
+    "name": "Temporary Residence and Work Authorization for Employment",
+    "slug": "temporary-residence-work-authorization-employment",
+    "description": "The Temporary Residence and Work Authorization for Employment allows non-EU citizens to reside and work in Spain under a specific employment contract. This procedure is regulated by the Immigration Regulation, articles 72 and following of Royal Decree 1155/2024, and is suitable for employers wishing to hire foreign workers. The process duration is 4 to 6 months.",
+    "tags": [
+      "residence",
+      "work",
+      "immigration regulation",
+      "employment"
+    ],
+    "active": true,
+    "price_range": "From €600",
+    "duration": "4-6 months",
+    "complexity": "Intermedio",
+    "icon_name": "briefcase",
+    "target_audience": "Companies and foreign workers seeking a residence and work permit in Spain under a specific contract.",
+    "benefits": "Allows legal residence in Spain.\nFacilitates integration into the Spanish labor market.\nEnsures labor rights equivalent to Spanish citizens.\nProvides access to public services and social benefits.\nPossibility of renewal and stabilization of immigration status.\nOpportunity to enhance professional profile with international experience.",
+    "process_steps": [
+      {
+        "step": 1,
+        "title": "Eligibility Assessment",
+        "description": "We determine if the candidate and employer meet the legal requirements.",
+        "estimated_time": "1-2 weeks"
+      },
+      {
+        "step": 2,
+        "title": "Document Collection",
+        "description": "We assist in gathering all necessary documents for the application.",
+        "estimated_time": "2-3 weeks"
+      },
+      {
+        "step": 3,
+        "title": "Application Submission",
+        "description": "We submit the residence and work authorization application to the competent immigration office.",
+        "estimated_time": "1 week"
+      },
+      {
+        "step": 4,
+        "title": "Evaluation by Immigration Office",
+        "description": "The immigration office reviews the application and may request additional information.",
+        "estimated_time": "16-24 weeks"
+      },
+      {
+        "step": 5,
+        "title": "Application Resolution",
+        "description": "We receive the resolution and notify the client of the final decision.",
+        "estimated_time": "1-2 weeks"
+      }
+    ],
+    "required_documents": {
+      "required_documents": [
+        "Organization of the worker's documentation:",
+        "Passport.",
+        "Proof of professional qualifications or homologation, when applicable.",
+        "Organization of the employer/company's documentation:",
+        "Tax ID (NIF/NIE) or articles of incorporation.",
+        "Proof of legal representation.",
+        "Financial solvency documents: Personal Income Tax (IRPF), VAT, Corporate Tax, or VILE.",
+        "Job description report.",
+        "Preparation of documentation for domestic service, when applicable.",
+        "Copy of the employment contract."
+      ]
+    },
+    "success_rate": "100%",
+    "faq": [
+      {
+        "question": "Who can apply for this authorization?",
+        "answer": "Any non-EU citizen with a job offer in Spain can apply for this authorization, provided they meet the established legal requirements."
+      },
+      {
+        "question": "How long does the process take?",
+        "answer": "The entire process may take between 4 and 6 months, depending on the workload of the immigration office and the complexity of the case. Afterwards, visa issuance takes approximately 1 month."
+      },
+      {
+        "question": "Can this authorization be renewed?",
+        "answer": "Yes, the authorization can be renewed if the application meets the job contract conditions and the worker continues to meet the requirements."
+      },
+      {
+        "question": "What happens if the application is denied?",
+        "answer": "If the application is denied, an appeal can be filed, either through a reconsideration or a contentious-administrative appeal, depending on the specific circumstances of the case."
+      },
+      {
+        "question": "Can the worker change employers?",
+        "answer": "Initially, the authorization is tied to a specific employer. However, changing employers is possible by following the procedure established by law, with prior authorization."
+      }
+    ],
+    "SEO": {
+      "metaTitle": "Spain Residence and Work Authorization",
+      "metaDescription": "Get your residence and work permit in Spain with our specialized service. Clear and efficient process.",
+      "keywords": [
+        "residence",
+        "work",
+        "immigration",
+        "employment"
+      ],
+      "canonicalURL": "https://vasel.es/service/temporary-residence-work-authorization-employment",
+      "metaRobots": "index, follow"
+    }
+  }
+}

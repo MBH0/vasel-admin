@@ -26,7 +26,8 @@ export async function generateServiceContent(prompt: ServicePrompt) {
 You help create detailed, accurate, and comprehensive service descriptions for an immigration law firm.
 You must respond ONLY with valid JSON, no markdown, no code blocks, just the raw JSON object.
 
-IMPORTANT: Create EXTENSIVE and DETAILED content. Each section should be thorough and informative.`;
+IMPORTANT: Create EXTENSIVE and DETAILED content. Each section should be thorough and informative.
+IMPORTANT: The law firm's website is https://vasel.es - use this domain for all canonical URLs.`;
 
 	const additionalContext = prompt.comments
 		? `\n\nAdditional Context from User:\n${prompt.comments}\n\nUse this information to make the service description more accurate and tailored.`
@@ -85,7 +86,7 @@ Create the service in BOTH Spanish and English. Return a JSON object with this e
       "metaTitle": "string (MAX 60 characters)",
       "metaDescription": "string (MAX 160 characters)",
       "keywords": ["array"],
-      "canonicalURL": "string",
+      "canonicalURL": "https://vasel.es/service/slug-here (for services) or https://vasel.es/blog/slug-here (for blogs)",
       "metaRobots": "index, follow"
     }
   },
@@ -135,7 +136,8 @@ export async function generateBlogContent(prompt: BlogPrompt) {
 	const systemPrompt = `You are an expert immigration lawyer in Spain writing comprehensive and educational blog content about Spanish immigration law.
 You must respond ONLY with valid JSON, no markdown, no code blocks, just the raw JSON object.
 
-IMPORTANT: Create IN-DEPTH and EXTENSIVE content. Articles should be comprehensive, well-structured, and highly informative.`;
+IMPORTANT: Create IN-DEPTH and EXTENSIVE content. Articles should be comprehensive, well-structured, and highly informative.
+IMPORTANT: The law firm's website is https://vasel.es - use this domain for all canonical URLs.`;
 
 	const additionalContext = prompt.comments
 		? `\n\nAdditional Context from User:\n${prompt.comments}\n\nUse this information to make the blog content more accurate, relevant, and tailored to the specific needs.`
@@ -183,7 +185,7 @@ Create the blog in BOTH Spanish and English. Return a JSON object with this exac
       "metaTitle": "string (MAX 60 characters)",
       "metaDescription": "string (MAX 160 characters)",
       "keywords": ["array"],
-      "canonicalURL": "string",
+      "canonicalURL": "https://vasel.es/service/slug-here (for services) or https://vasel.es/blog/slug-here (for blogs)",
       "metaRobots": "index, follow"
     }
   },
