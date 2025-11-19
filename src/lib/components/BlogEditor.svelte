@@ -7,12 +7,55 @@
 	// Create a deep copy to edit
 	let editedBlog = JSON.parse(JSON.stringify(blog));
 
+	// Normalize SEO field to always use uppercase SEO
+	if (!editedBlog.SEO && editedBlog.seo) {
+		editedBlog.SEO = editedBlog.seo;
+		delete editedBlog.seo;
+	}
+
+	// Ensure SEO object exists
+	if (!editedBlog.SEO) {
+		editedBlog.SEO = {
+			metaTitle: editedBlog.title || '',
+			metaDescription: editedBlog.excerpt || '',
+			keywords: ''
+		};
+	}
+
+	// Normalize SEO field names (convert snake_case to camelCase)
+	if (editedBlog.SEO.meta_title) {
+		editedBlog.SEO.metaTitle = editedBlog.SEO.meta_title;
+		delete editedBlog.SEO.meta_title;
+	}
+	if (editedBlog.SEO.meta_description) {
+		editedBlog.SEO.metaDescription = editedBlog.SEO.meta_description;
+		delete editedBlog.SEO.meta_description;
+	}
+
 	// Helper to join/split tags
-	let tagsText = editedBlog.tags?.join(', ') || '';
+	let tagsText = Array.isArray(editedBlog.tags) ? editedBlog.tags.join(', ') : '';
 
 	function handleSave() {
 		// Update tags
 		editedBlog.tags = tagsText.split(',').map((t: string) => t.trim()).filter((t: string) => t);
+
+		// Ensure SEO fields are properly formatted
+		if (editedBlog.SEO) {
+			// Remove any null/undefined values
+			Object.keys(editedBlog.SEO).forEach(key => {
+				if (editedBlog.SEO[key] === null || editedBlog.SEO[key] === undefined) {
+					delete editedBlog.SEO[key];
+				}
+			});
+
+			// Ensure required fields exist
+			if (!editedBlog.SEO.metaTitle) {
+				editedBlog.SEO.metaTitle = editedBlog.title;
+			}
+			if (!editedBlog.SEO.metaDescription) {
+				editedBlog.SEO.metaDescription = editedBlog.excerpt || '';
+			}
+		}
 
 		onSave(editedBlog);
 	}
@@ -279,20 +322,20 @@
 			<p class="mt-1 text-sm text-gray-500">Separa cada etiqueta con una coma</p>
 		</div>
 
-		{#if editedBlog.seo}
+		{#if editedBlog.SEO}
 			<div class="grid md:grid-cols-2 gap-4">
 				<div>
 					<label for="seo-title-{language}" class="label">SEO Título</label>
 					<input
 						id="seo-title-{language}"
 						type="text"
-						bind:value={editedBlog.seo.meta_title}
+						bind:value={editedBlog.SEO.metaTitle}
 						class="input"
-						class:border-red-500={editedBlog.seo.meta_title && editedBlog.seo.meta_title.length > 60}
+						class:border-red-500={editedBlog.SEO.metaTitle && editedBlog.SEO.metaTitle.length > 60}
 					/>
-					<p class="mt-1 text-sm" class:text-red-600={editedBlog.seo.meta_title && editedBlog.seo.meta_title.length > 60} class:text-gray-500={!editedBlog.seo.meta_title || editedBlog.seo.meta_title.length <= 60}>
-						{editedBlog.seo.meta_title ? editedBlog.seo.meta_title.length : 0}/60 caracteres
-						{#if editedBlog.seo.meta_title && editedBlog.seo.meta_title.length > 60}
+					<p class="mt-1 text-sm" class:text-red-600={editedBlog.SEO.metaTitle && editedBlog.SEO.metaTitle.length > 60} class:text-gray-500={!editedBlog.SEO.metaTitle || editedBlog.SEO.metaTitle.length <= 60}>
+						{editedBlog.SEO.metaTitle ? editedBlog.SEO.metaTitle.length : 0}/60 caracteres
+						{#if editedBlog.SEO.metaTitle && editedBlog.SEO.metaTitle.length > 60}
 							<span class="font-semibold">(¡Excede el límite!)</span>
 						{/if}
 					</p>
@@ -303,7 +346,7 @@
 					<input
 						id="seo-keywords-{language}"
 						type="text"
-						bind:value={editedBlog.seo.keywords}
+						bind:value={editedBlog.SEO.keywords}
 						class="input"
 					/>
 				</div>
@@ -313,14 +356,14 @@
 				<label for="seo-description-{language}" class="label">SEO Descripción</label>
 				<textarea
 					id="seo-description-{language}"
-					bind:value={editedBlog.seo.meta_description}
+					bind:value={editedBlog.SEO.metaDescription}
 					class="input min-h-[80px]"
-					class:border-red-500={editedBlog.seo.meta_description && editedBlog.seo.meta_description.length > 160}
+					class:border-red-500={editedBlog.SEO.metaDescription && editedBlog.SEO.metaDescription.length > 160}
 					rows="3"
 				></textarea>
-				<p class="mt-1 text-sm" class:text-red-600={editedBlog.seo.meta_description && editedBlog.seo.meta_description.length > 160} class:text-gray-500={!editedBlog.seo.meta_description || editedBlog.seo.meta_description.length <= 160}>
-					{editedBlog.seo.meta_description ? editedBlog.seo.meta_description.length : 0}/160 caracteres
-					{#if editedBlog.seo.meta_description && editedBlog.seo.meta_description.length > 160}
+				<p class="mt-1 text-sm" class:text-red-600={editedBlog.SEO.metaDescription && editedBlog.SEO.metaDescription.length > 160} class:text-gray-500={!editedBlog.SEO.metaDescription || editedBlog.SEO.metaDescription.length <= 160}>
+					{editedBlog.SEO.metaDescription ? editedBlog.SEO.metaDescription.length : 0}/160 caracteres
+					{#if editedBlog.SEO.metaDescription && editedBlog.SEO.metaDescription.length > 160}
 						<span class="font-semibold">(¡Excede el límite!)</span>
 					{/if}
 				</p>
