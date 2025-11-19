@@ -7,10 +7,17 @@
 	import { headersWithCSRF } from '$lib/csrf';
 	import { handleSessionExpiration, updateCSRFToken } from '$lib/sessionHelper';
 
+	// Mode selection
+	let mode: 'ai' | 'json' = 'ai';
+
+	// AI Generation fields
 	let topic = '';
 	let keywords = '';
 	let targetAudience = 'Foreigners seeking to immigrate to Spain';
 	let comments = '';
+
+	// JSON Import fields
+	let jsonInput = '';
 
 	let loading = false;
 	let error = '';
@@ -61,6 +68,62 @@
 			success = 'Blog generated successfully! Review and publish below.';
 		} catch (err: any) {
 			error = err.message || 'An error occurred while generating the blog';
+		} finally {
+			loading = false;
+		}
+	}
+
+	function importFromJSON() {
+		if (!jsonInput.trim()) {
+			error = 'Please provide JSON content';
+			return;
+		}
+
+		loading = true;
+		error = '';
+		success = '';
+		generatedContent = null;
+
+		try {
+			// Parse the JSON
+			const parsed = JSON.parse(jsonInput);
+
+			// Validate structure
+			if (!parsed.es || !parsed.en) {
+				throw new Error('JSON must contain both "es" and "en" objects');
+			}
+
+			// Validate Spanish version
+			if (!parsed.es.title || !parsed.es.slug || !parsed.es.content) {
+				throw new Error('Spanish version missing required fields: title, slug, or content');
+			}
+
+			// Validate English version
+			if (!parsed.en.title || !parsed.en.slug || !parsed.en.content) {
+				throw new Error('English version missing required fields: title, slug, or content');
+			}
+
+			// Normalize and set the content
+			generatedContent = {
+				es: {
+					...parsed.es,
+					tags: Array.isArray(parsed.es.tags) ? parsed.es.tags : [],
+					SEO: parsed.es.SEO || parsed.es.seo || {}
+				},
+				en: {
+					...parsed.en,
+					tags: Array.isArray(parsed.en.tags) ? parsed.en.tags : [],
+					SEO: parsed.en.SEO || parsed.en.seo || {}
+				}
+			};
+
+			success = 'JSON imported successfully! Review and publish below.';
+		} catch (err: any) {
+			if (err instanceof SyntaxError) {
+				error = 'Invalid JSON format. Please check your JSON syntax.';
+			} else {
+				error = err.message || 'An error occurred while importing JSON';
+			}
 		} finally {
 			loading = false;
 		}
@@ -139,10 +202,31 @@
 	<div class="max-w-5xl mx-auto">
 		<PageHeader
 			title="Generate Blog"
-			description="Create comprehensive immigration blog content using AI"
+			description="Create comprehensive immigration blog content using AI or import from JSON"
 			icon="✍️"
 		/>
 
+		<!-- Mode Selection Tabs -->
+		<div class="card p-6 mb-8">
+			<div class="flex gap-2 border-b border-gray-200">
+				<button
+					type="button"
+					on:click={() => { mode = 'ai'; error = ''; success = ''; }}
+					class="px-6 py-3 font-semibold border-b-2 transition-colors {mode === 'ai' ? 'border-primary text-primary' : 'border-transparent text-gray-500 hover:text-gray-700'}"
+				>
+					🤖 Generate with AI
+				</button>
+				<button
+					type="button"
+					on:click={() => { mode = 'json'; error = ''; success = ''; }}
+					class="px-6 py-3 font-semibold border-b-2 transition-colors {mode === 'json' ? 'border-primary text-primary' : 'border-transparent text-gray-500 hover:text-gray-700'}"
+				>
+					📋 Import from JSON
+				</button>
+			</div>
+		</div>
+
+		{#if mode === 'ai'}
 		<div class="card p-8 mb-8">
 			<form on:submit|preventDefault={generateBlog} class="space-y-6">
 				<div>
@@ -235,10 +319,61 @@
 				</button>
 			</form>
 		</div>
+		{:else}
+		<!-- JSON Import Mode -->
+		<div class="card p-8 mb-8">
+			<form on:submit|preventDefault={importFromJSON} class="space-y-6">
+				<div>
+					<label for="jsonInput" class="label">
+						Blog JSON <span class="text-red-500">*</span>
+					</label>
+					<textarea
+						id="jsonInput"
+						bind:value={jsonInput}
+						placeholder="Paste your complete blog JSON here with both 'es' and 'en' versions..."
+						class="input font-mono text-sm min-h-[400px] resize-y"
+						rows="20"
+						required
+					></textarea>
+					<p class="mt-1 text-sm text-gray-500">
+						Paste the complete blog JSON with both Spanish (es) and English (en) versions
+					</p>
+				</div>
+
+				{#if error}
+					<Alert type="error" message={error} />
+				{/if}
+
+				{#if success && !generatedContent}
+					<Alert type="success" message={success} />
+				{/if}
+
+				<button type="submit" disabled={loading} class="btn-primary w-full">
+					{#if loading}
+						<svg
+							class="animate-spin h-5 w-5 inline-block mr-2"
+							fill="none"
+							viewBox="0 0 24 24"
+						>
+							<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+							<path
+								class="opacity-75"
+								fill="currentColor"
+								d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+							></path>
+						</svg>
+						Processing...
+					{:else}
+						📥 Import JSON
+					{/if}
+				</button>
+			</form>
+		</div>
+		{/if}
 
 		{#if loading && !generatedContent}
 			<div class="card p-8">
-				<LoadingSpinner message="AI is creating your blog content..." />
+				<LoadingSpinner message={mode === 'ai' ? "AI is creating your blog content..." : "Processing your JSON..."} />
 			</div>
 		{/if}
 
