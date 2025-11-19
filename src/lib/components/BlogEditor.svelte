@@ -73,7 +73,7 @@
 		}
 		editedBlog.content = [...editedBlog.content, {
 			type: 'paragraph',
-			children: [{ type: 'text', text: '' }]
+			text: ''
 		}];
 	}
 
@@ -101,30 +101,46 @@
 
 	// Helper to get/set text content from blocks
 	function getBlockText(block: any): string {
-		if (block.children && block.children[0]?.text !== undefined) {
-			return block.children[0].text;
+		// Handle direct text property (from AI generation)
+		if (block.text !== undefined && typeof block.text === 'string') {
+			return block.text;
 		}
-		if (block.children && block.children[0]?.children) {
-			return block.children.map((child: any) =>
-				child.children ? child.children[0]?.text || '' : child.text || ''
-			).join('\n');
+
+		// Handle items array (for lists from AI)
+		if (block.items && Array.isArray(block.items)) {
+			return block.items.map((item: any) => {
+				if (typeof item === 'string') return item;
+				if (item.text) return item.text;
+				return '';
+			}).join('\n');
 		}
+
+		// Handle children array (Strapi format)
+		if (block.children && Array.isArray(block.children)) {
+			if (block.children[0]?.text !== undefined) {
+				return block.children[0].text;
+			}
+			if (block.children[0]?.children) {
+				return block.children.map((child: any) =>
+					child.children ? child.children[0]?.text || '' : child.text || ''
+				).join('\n');
+			}
+		}
+
 		return '';
 	}
 
 	function setBlockText(block: any, text: string) {
 		if (block.type === 'list') {
-			// For lists, split by newlines
-			block.children = text.split('\n').filter(line => line.trim()).map(line => ({
-				type: 'list-item',
-				children: [{ type: 'text', text: line.trim() }]
-			}));
+			// For lists, use items array (AI format)
+			block.items = text.split('\n').filter(line => line.trim()).map(line => line.trim());
+			// Remove children if it exists
+			delete block.children;
 		} else {
-			// For other blocks, just set the text
-			if (!block.children) {
-				block.children = [{ type: 'text', text: '' }];
-			}
-			block.children[0].text = text;
+			// For other blocks, use direct text property (AI format)
+			block.text = text;
+			// Remove children if it exists
+			delete block.children;
 		}
 	}
 
@@ -275,7 +291,7 @@
 								<div>
 									<label class="label text-sm">Formato de Lista</label>
 									<select
-										bind:value={block.format}
+										bind:value={block.style}
 										class="input"
 									>
 										<option value="unordered">Sin ordenar (•)</option>
