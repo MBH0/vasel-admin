@@ -192,6 +192,37 @@
 	function handleCancelEn() {
 		editModeEn = false;
 	}
+
+	// Copy JSON functions
+	async function copyToClipboard(text: string, locale: string) {
+		try {
+			await navigator.clipboard.writeText(text);
+			success = `✅ ${locale} JSON copied to clipboard!`;
+			setTimeout(() => {
+				if (success.includes('copied to clipboard')) success = '';
+			}, 3000);
+		} catch (err) {
+			error = 'Failed to copy to clipboard';
+		}
+	}
+
+	function copyEsJson() {
+		if (!generatedContent?.es) return;
+		const json = JSON.stringify(generatedContent.es, null, 2);
+		copyToClipboard(json, 'Spanish');
+	}
+
+	function copyEnJson() {
+		if (!generatedContent?.en) return;
+		const json = JSON.stringify(generatedContent.en, null, 2);
+		copyToClipboard(json, 'English');
+	}
+
+	function copyBothJson() {
+		if (!generatedContent) return;
+		const json = JSON.stringify(generatedContent, null, 2);
+		copyToClipboard(json, 'Both');
+	}
 </script>
 
 <svelte:head>
@@ -388,7 +419,7 @@
 								✨ Generated Content Preview
 							{/if}
 						</h2>
-						<div class="flex items-center gap-3">
+						<div class="flex items-center gap-3 flex-wrap">
 							{#if !editModeEs && !editModeEn}
 								<button
 									type="button"
@@ -396,6 +427,14 @@
 									class="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-sm font-semibold"
 								>
 									✏️ Editar Ambas
+								</button>
+								<button
+									type="button"
+									on:click={copyBothJson}
+									class="px-4 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors text-sm font-semibold"
+									title="Copy both ES and EN JSON"
+								>
+									📋 Copy Both JSON
 								</button>
 							{/if}
 							<span class="px-4 py-2 bg-emerald-100 text-emerald-800 rounded-full text-sm font-semibold">
@@ -408,7 +447,15 @@
 						<!-- Spanish Version -->
 						<div class="space-y-3">
 							{#if !editModeEs}
-								<div class="flex justify-end">
+								<div class="flex justify-end gap-2">
+									<button
+										type="button"
+										on:click={copyEsJson}
+										class="text-sm px-3 py-1 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors"
+										title="Copy Spanish JSON"
+									>
+										📋 Copy ES
+									</button>
 									<button
 										type="button"
 										on:click={() => editModeEs = true}
@@ -431,7 +478,15 @@
 						<!-- English Version -->
 						<div class="space-y-3">
 							{#if !editModeEn}
-								<div class="flex justify-end">
+								<div class="flex justify-end gap-2">
+									<button
+										type="button"
+										on:click={copyEnJson}
+										class="text-sm px-3 py-1 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors"
+										title="Copy English JSON"
+									>
+										📋 Copy EN
+									</button>
 									<button
 										type="button"
 										on:click={() => editModeEn = true}
